@@ -2,6 +2,7 @@ GenericEntity MainAI_QRF : "{C72F956E4AC6A6E7}Prefabs/Systems/ScenarioFramework/
  components {
   SCR_ScenarioFrameworkArea "{59E8CDC50969206E}" {
    m_sFactionKey "FIA"
+   m_eActivationType CUSTOM1
    m_aActivationActions {
     SCR_ScenarioFrameworkActionQRFDispacher_modified "{69542E8D4D6051AD}" : "{69200CFEA353A91C}scripts/game/Pastah/QRF Dispacher/QRFDispacherAction_modified.conf" {
      m_sQRFLayerName "QRFSpawnpointsLayer1"
@@ -38,6 +39,47 @@ GenericEntity MainAI_QRF : "{C72F956E4AC6A6E7}Prefabs/Systems/ScenarioFramework/
   }
  }
  coords 4744.183 369.931 6332.16
+ userScript "	bool disabled = true;"
+ EOnInit ""\
+ "		if (disabled)"\
+ "			owner.SetEventMask(EntityEvent.DISABLED);"\
+ "        PS_GameModeCoop gameMode = PS_GameModeCoop.Cast(GetGame().GetGameMode());"\
+ "        if (!gameMode)"\
+ "        {"\
+ "            Print(\"ERROR: PS_GameModeCoop not found\", LogLevel.ERROR);"\
+ "            return;"\
+ "        }"\
+ ""\
+ "		// Validate freeze time"\
+ "		int freezeTime = gameMode.m_iFreezeTime;"\
+ ""\
+ "		if (freezeTime <= 0)"\
+ "		{"\
+ "			Print(\"ERROR: m_iFreezeTime missing, invalid, or <= 0\", LogLevel.ERROR);"\
+ "			return;"\
+ "		}"\
+ "		"\
+ "		Print(\"Calling later: \" + freezeTime);"\
+ "		GetGame().GetCallqueue().CallLater("\
+ "			EnableOwner,"\
+ "			freezeTime,"\
+ "			false,"\
+ "			owner"\
+ "		);"\
+ "	}"\
+ ""\
+ "	void EnableOwner(IEntity owner)"\
+ "	{"\
+ "		Print(\"Enable owner called\");"\
+ "		if (owner) {"\
+ "			Print(\"Has owner\");"\
+ "			disabled = false;"\
+ "			owner.ClearEventMask(EntityEvent.DISABLED);"\
+ "			super.EOnActivate(owner);"\
+ "			Print(\"finish\");"\
+ "			//owner.SetEnabled(true);"\
+ "		}"\
+ "	"
  {
   $grp GenericEntity : "{5F9FFF4BF027B3A3}Prefabs/Systems/ScenarioFramework/Components/Layer.et" {
    SirensLayer {
